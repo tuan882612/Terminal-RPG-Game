@@ -63,7 +63,8 @@ public class Application {
         }
 
         if (count < 2) {
-            System.out.println("\n1. yes\n2. no");
+            System.out.println("\n1. Yes");
+            System.out.println("2. No");
             System.out.print("Do you want to export your Player data? ");
 
             if (input.nextInt() == 1) {

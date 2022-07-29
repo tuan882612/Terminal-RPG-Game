@@ -9,7 +9,7 @@ public class Player {
     int Strength;
     int Dexterity;
     int Constitution;
-    int Disarmed = 0;
+    boolean Disarmed = false;
 
     int DisarmedCount = 0;
     public Player(String name,
@@ -102,11 +102,11 @@ public class Player {
         ArmorClass = armorClass;
     }
 
-    public int getDisarmed() {
+    public boolean getDisarmed() {
         return Disarmed;
     }
 
-    public void setDisarmed(int state) {
+    public void setDisarmed(boolean state) {
         Disarmed = state;
     }
 

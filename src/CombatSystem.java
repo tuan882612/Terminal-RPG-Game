@@ -33,54 +33,12 @@ public class CombatSystem {
         boolean GameState = false;
 
         while (!GameState){
-            movement(GMap, Pos1, player1);
-            movement(GMap, Pos2, player2);
+            Movement(GMap, Pos1, player1);
+            Movement(GMap, Pos2, player2);
 
-            if(player1.getDisarmed() == 0) {
-                if (Pos1.Verify(Pos2)) {
-                    System.out.println("\n1. Attack ");
-                    System.out.println("2. Disarm");
-                    System.out.print("Enter an option: ");
-                    int option = input.nextInt();
+            TurnOptions(player1, player2, Pos1, Pos2);
+            TurnOptions(player2, player1, Pos2, Pos1);
 
-                    switch (option) {
-                        case 1 -> Attack(player1, player2);
-                        case 2 -> Disarm(player1, player2);
-                    }
-                }
-            } else {
-                System.out.println(player1.getName()+" has been disarmed.");
-                System.out.println(player1.getDisarmedCount()+" rounds left");
-
-                player1.setDisarmedCount(player1.getDisarmedCount()-1);
-
-                if(player1.getDisarmedCount() == 0){
-                    player1.setDisarmed(1);
-                }
-            }
-
-            if(player2.getDisarmed() == 0) {
-                if (Pos1.Verify(Pos2)) {
-                    System.out.println("\n1. Attack");
-                    System.out.println("2. Disarm");
-                    System.out.print("Enter an option: ");
-                    int option = input.nextInt();
-
-                    switch (option) {
-                        case 1 -> Attack(player2, player1);
-                        case 2 -> Disarm(player2, player1);
-                    }
-                }
-            } else {
-                System.out.println(player2.getName()+" has been disarmed.");
-                System.out.println(player2.getDisarmedCount()+" rounds left");
-
-                player2.setDisarmedCount(player2.getDisarmedCount()-1);
-
-                if(player2.getDisarmedCount() == 0){
-                    player2.setDisarmed(1);
-                }
-            }
             System.out.println("\n1. Yes ");
             System.out.println("2. No ");
             System.out.print("Do you want to continue? ");
@@ -93,7 +51,7 @@ public class CombatSystem {
         }
     }
 
-    public static void movement(GameMap map, Position pos, Player player){
+    public static void Movement(GameMap map, Position pos, Player player){
         Scanner input = new Scanner(System.in);
 
         System.out.println("\nTurn: " + player.getName()+"\n");
@@ -116,17 +74,8 @@ public class CombatSystem {
                     System.out.print("Enter Y: ");
                     int y = input.nextInt();
 
-                    if (y < 0){
-                        y = 0;
-                    } else if (y > 24) {
-                        y = 24;
-                    }
-
-                    if (x < 0){
-                        x = 0;
-                    } else if (x > 24) {
-                        x = 24;
-                    }
+                    y = (y > 24)? 24: Math.max(y, 0);
+                    x = (x > 24)? 24: Math.max(x, 0);
 
                     map.UpdatePosition(x, y, pos);
                 }
@@ -164,11 +113,34 @@ public class CombatSystem {
         int defense = GameUtil.RollDice("d20")+defender.Strength;
 
         if (offense > defense){
-            defender.setDisarmed(1);
+            defender.setDisarmed(true);
             defender.setDisarmedCount(2);
             System.out.println("\n"+attacker.getName()+" disarmed "+defender.getName()+".");
         } else {
             System.out.println("\n"+attacker.getName()+" wasn't able to disarm "+defender.getName()+".");
+        }
+    }
+
+    public static void TurnOptions(Player player1, Player player2, Position pos1, Position pos2){
+        Scanner input = new Scanner(System.in);
+
+        if(!player1.getDisarmed() && pos1.Verify(pos2)) {
+            GameUtil.DisplayMenu("turnOptions");
+            int option = input.nextInt();
+
+            switch (option) {
+                case 1 -> Attack(player1, player2);
+                case 2 -> Disarm(player1, player2);
+            }
+        } else {
+            System.out.println(player1.getName()+" has been disarmed.");
+            System.out.println(player1.getDisarmedCount()+" rounds left");
+
+            player1.setDisarmedCount(player1.getDisarmedCount()-1);
+
+            if(player1.getDisarmedCount() == 0){
+                player1.setDisarmed(true);
+            }
         }
     }
 }

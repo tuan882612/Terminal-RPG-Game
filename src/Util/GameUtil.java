@@ -32,6 +32,11 @@ public class GameUtil {
                 System.out.println("2. exit");
                 System.out.print("Enter an option: ");
             }
+            case "turnOptions" -> {
+                System.out.println("\n1. Attack ");
+                System.out.println("2. Disarm");
+                System.out.print("Enter an option: ");
+            }
         }
     }
 
