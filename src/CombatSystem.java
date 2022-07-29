@@ -22,7 +22,7 @@ public class CombatSystem {
                 dex2 = player2.getDexterity() + GameUtil.RollDice("d20");
             }
         } else if (dex1 < dex2){
-            player1 = ((Player) players.get(1));
+            player1 = (Player) players.get(1);
             player2 = (Player) players.get(0);
         }
 
@@ -85,42 +85,6 @@ public class CombatSystem {
         }
     }
 
-    public static void Attack(Player attacker, Player defender){
-        int damage = GameUtil.RollDice("d20") +
-                attacker.getDexterity() +
-                attacker.getWeapon().getBonus();
-
-        if (defender.getHitPoints() != 0){
-            if (damage >= defender.getArmorClass()){
-                System.out.println(attacker.getName() + " attacks " + defender.getName() +
-                        " with " + attacker.getWeapon().Name +
-                        " (" + defender.getArmorClass() + " to hit)...HITS!");
-
-                damage = GameUtil.RollDice(attacker.getWeapon().getDiceType()) +
-                        attacker.getStrength();
-
-                defender.takeDamage(damage);
-            } else {
-                System.out.println("\n"+attacker.getName() + " attacks " + defender.getName() +
-                        " with " + attacker.getWeapon().Name +
-                        " (" + defender.getArmorClass() + " to hit)...MISSES!");
-            }
-        }
-    }
-
-    public static void Disarm(Player attacker, Player defender){
-        int offense = GameUtil.RollDice("d20")+attacker.Strength;
-        int defense = GameUtil.RollDice("d20")+defender.Strength;
-
-        if (offense > defense){
-            defender.setDisarmed(true);
-            defender.setDisarmedCount(2);
-            System.out.println("\n"+attacker.getName()+" disarmed "+defender.getName()+".");
-        } else {
-            System.out.println("\n"+attacker.getName()+" wasn't able to disarm "+defender.getName()+".");
-        }
-    }
-
     public static void TurnOptions(Player player1, Player player2, Position pos1, Position pos2){
         Scanner input = new Scanner(System.in);
 
@@ -129,8 +93,8 @@ public class CombatSystem {
             int option = input.nextInt();
 
             switch (option) {
-                case 1 -> Attack(player1, player2);
-                case 2 -> Disarm(player1, player2);
+                case 1 -> player1.attack(player2);
+                case 2 -> player1.disarm(player2);
             }
         } else {
             System.out.println(player1.getName()+" has been disarmed.");

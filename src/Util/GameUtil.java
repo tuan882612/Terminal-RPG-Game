@@ -11,7 +11,9 @@ public class GameUtil {
             case "main" -> {
                 System.out.println("\n1. Start Game");
                 System.out.println("2. Create Characters");
-                System.out.println("3. Exit");
+                System.out.println("3. Load Character");
+                System.out.println("4. Save Character");
+                System.out.println("5. Exit");
                 System.out.print("Enter choice: ");
             }
             case "character" -> {

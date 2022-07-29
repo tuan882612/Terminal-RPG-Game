@@ -11,7 +11,7 @@ import static Util.GameUtil.DisplaySubMenu;
 import static java.lang.Integer.parseInt;
 
 public class Application {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
         DisplayMenu("main");
@@ -19,7 +19,7 @@ public class Application {
         int choice = input.nextInt();
         int count = 2;
 
-        while (choice != 3){
+        while (choice != 5){
             switch (choice) {
                 case 1 -> {
                     if (count == 0) {
@@ -32,7 +32,7 @@ public class Application {
                 }
                 case 2 -> {
                     if (count > 0) {
-                        System.out.println("\nCreating character\n");
+                        System.out.println("\nCreating character...\n");
                         Player character = null;
                         int choice1 = 0;
 
@@ -55,21 +55,18 @@ public class Application {
                         System.out.println("Please Start or Exit the game.");
                     }
                 }
+                case 3 -> {
+                    System.out.println("\nLoad Character\n");
+                }
+                case 4 -> {
+                    System.out.println("\nSave Character\n");
+
+                }
                 default -> System.out.println("\nPlease enter a valid choice.\n");
             }
 
             DisplayMenu("main");
             choice = input.nextInt();
-        }
-
-        if (count < 2) {
-            System.out.println("\n1. Yes");
-            System.out.println("2. No");
-            System.out.print("Do you want to export your Player data? ");
-
-            if (input.nextInt() == 1) {
-                FileUtil.ExportData(players);
-            }
         }
 
         System.out.println("\nExiting the game...");

@@ -1,17 +1,8 @@
-import java.time.LocalDate;
+import Util.GameUtil;
 
-public class Player {
-    String Name;
-    private final LocalDate Created;
+public class Player extends Creature{
     Weapon Weapon;
-    int HitPoints;
-    int ArmorClass;
-    int Strength;
-    int Dexterity;
-    int Constitution;
-    boolean Disarmed = false;
 
-    int DisarmedCount = 0;
     public Player(String name,
                   Weapon weapon,
                   int hitPoints,
@@ -19,14 +10,8 @@ public class Player {
                   int strength,
                   int dexterity,
                   int constitution) {
-        this.Created = LocalDate.now();
+        super(name,hitPoints,armorClass,strength,dexterity,constitution);
         setWeapon(weapon);
-        setName(name);
-        setHitPoints(hitPoints);
-        setArmorClass(armorClass);
-        setStrength(strength);
-        setDexterity(dexterity);
-        setConstitution(constitution);
     }
 
     public Player(String name,
@@ -34,32 +19,8 @@ public class Player {
                   int strength,
                   int dexterity,
                   int constitution) {
-        this.Created = LocalDate.now();
+        super(name,strength,dexterity,constitution);
         setWeapon(weapon);
-        setName(name);
-        setStrength(strength);
-        setDexterity(dexterity);
-        setConstitution(constitution);
-    }
-
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String name) {
-        Name = name;
-    }
-
-    public LocalDate getCreated() {
-        return Created;
-    }
-
-    public int getHitPoints() {
-        return HitPoints;
-    }
-
-    public void setHitPoints(int hitPoints) {
-        HitPoints = hitPoints;
     }
 
     public Weapon getWeapon() {
@@ -68,69 +29,6 @@ public class Player {
 
     public void setWeapon(Weapon weapon) {
         Weapon = weapon;
-    }
-
-    public int getStrength() {
-        return Strength;
-    }
-
-    public void setStrength(int strength) {
-        Strength = strength;
-    }
-
-    public int getDexterity() {
-        return Dexterity;
-    }
-
-    public void setDexterity(int dexterity) {
-        Dexterity = dexterity;
-    }
-
-    public int getConstitution() {
-        return Constitution;
-    }
-
-    public void setConstitution(int constitution) {
-        Constitution = constitution;
-    }
-
-    public int getArmorClass() {
-        return ArmorClass;
-    }
-
-    public void setArmorClass(int armorClass) {
-        ArmorClass = armorClass;
-    }
-
-    public boolean getDisarmed() {
-        return Disarmed;
-    }
-
-    public void setDisarmed(boolean state) {
-        Disarmed = state;
-    }
-
-    public int getDisarmedCount() {
-        return DisarmedCount;
-    }
-
-    public void setDisarmedCount(int disarmedCount) {
-        DisarmedCount = disarmedCount;
-    }
-
-    public void takeDamage(int damage){
-        setHitPoints(getHitPoints()-damage);
-
-        if(getHitPoints() < 0){
-            String type = getClass().toString().split(" ")[1];
-            setHitPoints(0);
-            System.out.println(
-                    type + " " +
-                            getName() +
-                            "'s Health Points has reached 0 and is defeated.\n");
-        } else {
-            System.out.println(getName() + " has taken " + damage + " points of damage.\n");
-        }
     }
 
     @Override
@@ -156,5 +54,42 @@ public class Player {
         System.out.println("Weapon Name:   " + getWeapon().getName());
         System.out.println("Weapon Damage: " + getWeapon().getDiceType());
         System.out.println("Weapon Bonus:  " + getWeapon().getBonus());
+    }
+
+    @Override
+    public void attack(Creature creature) {
+        int damage = GameUtil.RollDice("d20") +
+                getDexterity() +
+                getWeapon().getBonus();
+
+        if (creature.getHitPoints() != 0){
+            if (damage >= creature.getArmorClass()){
+                System.out.println(getName() + " attacks " + creature.getName() +
+                        " with " + getWeapon().Name +
+                        " (" + getArmorClass() + " to hit)...HITS!");
+
+                damage = GameUtil.RollDice(getWeapon().getDiceType()) + getStrength();
+
+                creature.takeDamage(damage);
+            } else {
+                System.out.println("\n"+getName() + " attacks " + creature.getName() +
+                        " with " + getWeapon().Name +
+                        " (" + creature.getArmorClass() + " to hit)...MISSES!");
+            }
+        }
+    }
+
+    @Override
+    public void disarm(Creature creature) {
+        int offense = GameUtil.RollDice("d20") + getStrength();
+        int defense = GameUtil.RollDice("d20") + creature.getStrength();
+
+        if (offense > defense){
+            creature.setDisarmed(true);
+            creature.setDisarmedCount(2);
+            System.out.println("\n" + getName() + " disarmed " + creature.getName() + ".");
+        } else {
+            System.out.println("\n" + getName() + " wasn't able to disarm " + creature.getName() + ".");
+        }
     }
 }
