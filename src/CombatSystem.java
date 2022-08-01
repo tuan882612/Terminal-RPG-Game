@@ -5,33 +5,35 @@ public class CombatSystem {
     public static void initialization(ArrayList<Creature> players, int mode){
         Scanner input = new Scanner(System.in);
 
-        Player player1 = (Player) players.get(0);
-        Position Pos1 = new Position(12,0, "O");
-
-        Player player2 = (Player) players.get(1);
-        Position Pos2 = new Position(12,24, "D");
-
-        int dex1 = player1.getDexterity() + GameUtil.rollDice("d20");
-        int dex2 = player2.getDexterity() + GameUtil.rollDice("d20");
-
-        if (dex1 == dex2){
-            while (dex1 == dex2){
-                dex1 = player1.getDexterity() + GameUtil.rollDice("d20");
-                dex2 = player2.getDexterity() + GameUtil.rollDice("d20");
-            }
-        } else if (dex1 < dex2){
-            player1 = (Player) players.get(1);
-            player2 = (Player) players.get(0);
-        }
-
         boolean GameState = false;
 
         switch (mode) {
             case 1 -> {
                 ArrayList<String> data = FileUtil.LoadData("./Data/monsters-1.csv");
-                System.out.println(data.size());
+                for(String i : data) {
+                    System.out.println(i);
+                }
             }
             case 2 -> {
+                Player player1 = (Player) players.get(0);
+                Position Pos1 = new Position(12,0, "O");
+
+                Player player2 = (Player) players.get(1);
+                Position Pos2 = new Position(12,24, "D");
+
+                int dex1 = player1.getDexterity() + GameUtil.rollDice("d20");
+                int dex2 = player2.getDexterity() + GameUtil.rollDice("d20");
+
+                if (dex1 == dex2){
+                    while (dex1 == dex2){
+                        dex1 = player1.getDexterity() + GameUtil.rollDice("d20");
+                        dex2 = player2.getDexterity() + GameUtil.rollDice("d20");
+                    }
+                } else if (dex1 < dex2){
+                    player1 = (Player) players.get(1);
+                    player2 = (Player) players.get(0);
+                }
+
                 GameMap GMap = new GameMap();
                 GMap.SetPosition(Pos1);
                 GMap.SetPosition(Pos2);
