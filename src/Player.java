@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Random;
-
 public class Player extends Creature{
     Weapon Weapon;
 

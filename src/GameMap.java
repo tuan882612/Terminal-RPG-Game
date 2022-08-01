@@ -1,9 +1,11 @@
 import java.util.ArrayList;
 
 public class GameMap {
-    ArrayList<ArrayList<String>> Map = new ArrayList<>();
+    ArrayList<ArrayList<String>> Map;
 
     public GameMap(){
+        Map = new ArrayList<>();
+
         for(int i = 0; i < 25; i++){
             Map.add(new ArrayList<>());
             for(int j = 0; j < 25; j++){

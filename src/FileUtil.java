@@ -4,12 +4,20 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class FileUtil {
-    public static ArrayList<String> LoadData(String fileName) throws FileNotFoundException {
-        Scanner data =  new Scanner(new File(fileName)).useDelimiter("\n");
+    public static ArrayList<String> LoadData(String fileName) {
+        Scanner data = null;
+
+        try {
+            data = new Scanner(new File(fileName));
+        } catch (FileNotFoundException error) {
+            System.out.println("Data file does not exist.");
+            System.exit(1);
+        }
+
         ArrayList<String> load = new ArrayList<>();
 
         while(data.hasNext()){
-            load.add(data.next());
+            load.add(data.nextLine());
         }
 
         return load;

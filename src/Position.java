@@ -34,6 +34,6 @@ public class Position {
     }
 
     public boolean validatePosition(Position obj) {
-        return getX() != obj.getX() && getY() != obj.getY();
+        return Math.abs(getX() - obj.getX()) <= 1 && Math.abs(getY() - obj.getY()) <= 1;
     }
 }

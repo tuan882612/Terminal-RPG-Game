@@ -25,6 +25,7 @@ public class Application {
                             case 1 -> {
                                 if (players.size() >= 1) {
                                     System.out.println("\nPlaying with Monsters...\n");
+                                    CombatSystem.initialization(players, 1);
                                 } else {
                                     GameUtil.displayMenu("playerCountError");
                                 }
@@ -32,7 +33,7 @@ public class Application {
                             case 2 -> {
                                 if (players.size() == 2) {
                                     System.out.println("\nStarting the game...\n");
-                                    CombatSystem.initialization(players);
+                                    CombatSystem.initialization(players, 2);
                                 } else {
                                     GameUtil.displayMenu("playerCountError");
                                 }
@@ -269,15 +270,7 @@ public class Application {
     public static Weapon WeaponCreation() {
         Scanner input = new Scanner(System.in);
 
-        ArrayList<String> choices = null;
-
-        try {
-            choices = FileUtil.LoadData("./Data/weapons.csv");
-        } catch (FileNotFoundException error) {
-            System.out.println("Data file does not exist.");
-            System.exit(1);
-        }
-
+        ArrayList<String> choices = FileUtil.LoadData("./Data/weapons.csv");
         int count = 1;
 
         for(String row : choices) {
@@ -294,6 +287,6 @@ public class Application {
         int option = input.nextInt()-1;
         String[] parsed = choices.get(option).split(",");
 
-        return new Weapon(parsed[0], parsed[1], parseInt(parsed[2]));
+        return new Weapon(parsed[0], parsed[1], parseInt(parsed[2].strip()));
     }
 }

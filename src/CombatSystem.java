@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CombatSystem {
-    public static void initialization(ArrayList<Creature> players){
+    public static void initialization(ArrayList<Creature> players, int mode){
         Scanner input = new Scanner(System.in);
 
         Player player1 = (Player) players.get(0);
@@ -24,27 +24,35 @@ public class CombatSystem {
             player2 = (Player) players.get(0);
         }
 
-        GameMap GMap = new GameMap();
-        GMap.SetPosition(Pos1);
-        GMap.SetPosition(Pos2);
-
         boolean GameState = false;
 
-        while (!GameState){
-            Movement(GMap, Pos1, player1);
-            Movement(GMap, Pos2, player2);
+        switch (mode) {
+            case 1 -> {
+                ArrayList<String> data = FileUtil.LoadData("./Data/monsters-1.csv");
+                System.out.println(data.size());
+            }
+            case 2 -> {
+                GameMap GMap = new GameMap();
+                GMap.SetPosition(Pos1);
+                GMap.SetPosition(Pos2);
 
-            TurnOptions(player1, player2, Pos1, Pos2);
-            TurnOptions(player2, player1, Pos2, Pos1);
+                while (!GameState) {
+                    Movement(GMap, Pos1, player1);
+                    Movement(GMap, Pos2, player2);
 
-            System.out.println("\n1. Yes ");
-            System.out.println("2. No ");
-            System.out.print("Do you want to continue? ");
-            int option = input.nextInt();
+                    TurnOptions(player1, player2, Pos1, Pos2);
+                    TurnOptions(player2, player1, Pos2, Pos1);
 
-            switch (option) {
-                case 1 -> System.out.println("\nGame will continue.");
-                case 2 -> GameState = true;
+                    System.out.println("\n1. Yes ");
+                    System.out.println("2. No ");
+                    System.out.print("Do you want to continue? ");
+                    int option = input.nextInt();
+
+                    switch (option) {
+                        case 1 -> System.out.println("\nGame will continue.");
+                        case 2 -> GameState = true;
+                    }
+                }
             }
         }
     }
@@ -69,10 +77,10 @@ public class CombatSystem {
             switch (choice) {
                 case 1 -> {
                     System.out.print("\nEnter X: ");
-                    int y = input.nextInt();
+                    int y = input.nextInt()-1;
 
                     System.out.print("Enter Y: ");
-                    int x = input.nextInt();
+                    int x = input.nextInt()-1;
 
                     y = (y > 24) ? 24 : Math.max(y, 0);
                     x = (x > 24) ? 24 : Math.max(x, 0);
@@ -88,9 +96,10 @@ public class CombatSystem {
     public static void TurnOptions(Player player1, Player player2, Position pos1, Position pos2){
         Scanner input = new Scanner(System.in);
 
-        if (!pos1.validatePosition(pos2)) {
+        System.out.println("\nTurn: " + player1.getName());
+
+        if (pos1.validatePosition(pos2)) {
             if (!player1.getDisarmed()) {
-                System.out.println("\nTurn: " + player1.getName());
                 GameUtil.displayMenu("turnOptions");
 
                 int option = input.nextInt();
@@ -100,13 +109,13 @@ public class CombatSystem {
                     case 2 -> player1.disarm(player2);
                 }
             } else {
-                System.out.println(player1.getName() + " has been disarmed.");
+                System.out.println("\n" + player1.getName() + " has been disarmed.");
                 System.out.println(player1.getDisarmedCount() + " rounds left");
 
                 player1.setDisarmedCount(player1.getDisarmedCount() - 1);
 
                 if (player1.getDisarmedCount() == 0) {
-                    player1.setDisarmed(true);
+                    player1.setDisarmed(false);
                 }
             }
         } else {

@@ -36,7 +36,7 @@ public class GameUtil {
             }
             case "movement" -> {
                 System.out.println("\n1. move");
-                System.out.println("2. exit");
+                System.out.println("2. continue");
                 System.out.print("Enter an option: ");
             }
             case "turnOptions" -> {
