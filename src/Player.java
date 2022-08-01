@@ -1,4 +1,5 @@
-import Util.GameUtil;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Player extends Creature{
     Weapon Weapon;
@@ -31,6 +32,10 @@ public class Player extends Creature{
         Weapon = weapon;
     }
 
+    public int rollInitiative() {
+        return GameUtil.rollDice("d20");
+    }
+
     @Override
     public String toString(){
         return getCreated()
@@ -58,17 +63,17 @@ public class Player extends Creature{
 
     @Override
     public void attack(Creature creature) {
-        int damage = GameUtil.RollDice("d20") +
+        int damage = GameUtil.rollDice("d20") +
                 getDexterity() +
                 getWeapon().getBonus();
 
         if (creature.getHitPoints() != 0){
             if (damage >= creature.getArmorClass()){
-                System.out.println(getName() + " attacks " + creature.getName() +
+                System.out.println("\n"+getName() + " attacks " + creature.getName() +
                         " with " + getWeapon().Name +
                         " (" + getArmorClass() + " to hit)...HITS!");
 
-                damage = GameUtil.RollDice(getWeapon().getDiceType()) + getStrength();
+                damage = GameUtil.rollDice(getWeapon().getDiceType()) + getStrength();
 
                 creature.takeDamage(damage);
             } else {
@@ -81,8 +86,8 @@ public class Player extends Creature{
 
     @Override
     public void disarm(Creature creature) {
-        int offense = GameUtil.RollDice("d20") + getStrength();
-        int defense = GameUtil.RollDice("d20") + creature.getStrength();
+        int offense = GameUtil.rollDice("d20") + getStrength();
+        int defense = GameUtil.rollDice("d20") + creature.getStrength();
 
         if (offense > defense){
             creature.setDisarmed(true);
@@ -92,4 +97,5 @@ public class Player extends Creature{
             System.out.println("\n" + getName() + " wasn't able to disarm " + creature.getName() + ".");
         }
     }
+
 }

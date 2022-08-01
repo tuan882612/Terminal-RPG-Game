@@ -113,7 +113,7 @@ public abstract class Creature implements Comparable<Creature>{
             setHitPoints(0);
             System.out.println(type + " " + getName() + "'s Health Points has reached 0 and is defeated.\n");
         } else {
-            System.out.println(getName() + " has taken " + damage + " points of damage.\n");
+            System.out.println("\n" + getName() + " has taken " + damage + " points of damage.\n");
         }
     }
 

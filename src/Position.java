@@ -1,20 +1,20 @@
 public class Position {
     int X = 0;
     int Y = 0;
-    String Holder;
+    String Icon;
 
-    public Position(int x, int y, String holder){
+    public Position(int x, int y, String icon){
         setX(x);
         setY(y);
-        setHolder(holder);
+        setIcon(icon);
     }
 
-    public String getHolder() {
-        return Holder;
+    public String getIcon() {
+        return Icon;
     }
 
-    private void setHolder(String holder) {
-        Holder = holder;
+    private void setIcon(String icon) {
+        Icon = icon;
     }
 
     public int getX() {
@@ -33,7 +33,7 @@ public class Position {
         Y = y;
     }
 
-    public boolean Verify(Position obj) {
+    public boolean validatePosition(Position obj) {
         return getX() != obj.getX() && getY() != obj.getY();
     }
 }

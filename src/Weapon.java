@@ -1,5 +1,3 @@
-import Util.GameUtil;
-
 public class Weapon {
     String Name;
     String DiceType;
@@ -41,11 +39,11 @@ public class Weapon {
     }
 
     public int rollDamage() {
-        return GameUtil.RollDice(getDiceType());
+        return GameUtil.rollDice(getDiceType());
     }
 
     @Override
     public String toString(){
-        return getName() + "-(" + getDiceType() + ")";
+        return getName() + "-" + getDiceType() + "-" + getBonus();
     }
 }

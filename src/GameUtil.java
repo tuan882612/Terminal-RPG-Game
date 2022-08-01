@@ -1,12 +1,11 @@
-package Util;
-
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
 import static java.lang.Integer.parseInt;
 
 public class GameUtil {
-    public static void DisplayMenu(String type){
+    public static void displayMenu(String type){
         switch (type) {
             case "main" -> {
                 System.out.println("\n1. Start Game");
@@ -14,7 +13,13 @@ public class GameUtil {
                 System.out.println("3. Load Character");
                 System.out.println("4. Save Character");
                 System.out.println("5. Exit");
-                System.out.print("Enter choice: ");
+                System.out.print("Enter an option: ");
+            }
+            case "gameOptions" -> {
+                System.out.println("\n1. Play with Random Monsters");
+                System.out.println("2. Play with Players Only (PvP)");
+                System.out.println("3. Back");
+                System.out.print("Enter an option: ");
             }
             case "character" -> {
                 System.out.println("\n1. Manual stats");
@@ -27,7 +32,7 @@ public class GameUtil {
                 System.out.println("3. Add CON");
                 System.out.println("4. Reset");
                 System.out.println("5. Finish");
-                System.out.print("Enter choice: ");
+                System.out.print("Enter an option: ");
             }
             case "movement" -> {
                 System.out.println("\n1. move");
@@ -39,14 +44,18 @@ public class GameUtil {
                 System.out.println("2. Disarm");
                 System.out.print("Enter an option: ");
             }
+            case "playerCountError" -> {
+                System.out.println("\nYou do not have enough Players to play.");
+                System.out.println("Please create another Character.");
+            }
         }
     }
 
-    public static void DisplaySubMenu(String type,
-                                   int Str,
-                                   int Dex,
-                                   int Con,
-                                   int count){
+    public static void displaySubMenu(String type,
+                                      int Str,
+                                      int Dex,
+                                      int Con,
+                                      int count){
         if (Objects.equals(type, "stats")){
             System.out.println("\nSTR: " + Str);
             System.out.println("DEX: " + Dex);
@@ -55,7 +64,7 @@ public class GameUtil {
         }
     }
 
-    public static int RollDice(String input){
+    public static int rollDice(String input){
         String[] preString = input.split("d");
 
         try {
@@ -81,5 +90,36 @@ public class GameUtil {
             System.out.println("Invalid input") ;
             return -1;
         }
+    }
+
+    public static boolean validateName(String name) {
+        boolean capLet = Character.isUpperCase(name.charAt(0));
+        boolean special = name.matches("^[a-zA-Z]*$");
+        int count = 0;
+        String msg1 = "";
+        String msg2 = "";
+
+        if (!capLet) {
+            count++;
+            msg1 = "\n" + count + ". The first letter of your name is not capitalized.";
+        }
+
+        if (!special) {
+            count++;
+            msg2 = "\n" + count + ". Your name contains a special character or number.";
+        }
+
+        if (!capLet || !special){
+            System.out.println(msg1 + msg2);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean validatePlayers(ArrayList<Creature> players, String name) {
+        for(Creature creature : players){
+            if (creature.toString().split(" ")[1].equals(name)) return false;
+        }
+        return true;
     }
 }

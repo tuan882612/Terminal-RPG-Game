@@ -1,37 +1,49 @@
-import Util.FileUtil;
-
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
-import static Util.GameUtil.DisplayMenu;
-import static Util.GameUtil.DisplaySubMenu;
 import static java.lang.Integer.parseInt;
 
 public class Application {
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
+    public static ArrayList<Creature> players;
 
-        DisplayMenu("main");
-        ArrayList<Object> players = new ArrayList<>();
+    public static void App() {
+        Scanner input = new Scanner(System.in);
+        players = new ArrayList<>();
+
+        GameUtil.displayMenu("main");
         int choice = input.nextInt();
-        int count = 2;
 
         while (choice != 5){
             switch (choice) {
                 case 1 -> {
-                    if (count == 0) {
-                        System.out.println("\nStarting the game...\n");
-                        CombatSystem.initialization(players);
-                    } else {
-                        System.out.println("\nYou do not have enough Players to play.");
-                        System.out.println("Please create another Character.");
+                    GameUtil.displayMenu("gameOptions");
+                    int gameChoice = input.nextInt();
+
+                    while (gameChoice != 3) {
+                        switch (gameChoice) {
+                            case 1 -> {
+                                if (players.size() >= 1) {
+                                    System.out.println("\nPlaying with Monsters...\n");
+                                } else {
+                                    GameUtil.displayMenu("playerCountError");
+                                }
+                            }
+                            case 2 -> {
+                                if (players.size() == 2) {
+                                    System.out.println("\nStarting the game...\n");
+                                    CombatSystem.initialization(players);
+                                } else {
+                                    GameUtil.displayMenu("playerCountError");
+                                }
+                            }
+                        }
+                        GameUtil.displayMenu("gameOptions");
+                        gameChoice = input.nextInt();
                     }
                 }
                 case 2 -> {
-                    if (count > 0) {
+                    if (players.size() < 2) {
                         System.out.println("\nCreating character...\n");
                         Player character = null;
                         int choice1 = 0;
@@ -49,23 +61,126 @@ public class Application {
                         }
 
                         players.add(character);
-                        count--;
                     } else {
                         System.out.println("\nYou have create the maximum amount of players.");
                         System.out.println("Please Start or Exit the game.");
                     }
                 }
                 case 3 -> {
-                    System.out.println("\nLoad Character\n");
+                    File[] filesDirectory = new File("./Data/Saved").listFiles();
+
+                    if (Objects.requireNonNull(filesDirectory).length > 0 && players.size() < 2) {
+                        System.out.println("\nLoad Character...\n");
+                        boolean loaded = false;
+                        int index = 0;
+
+                        for (File file : filesDirectory) {
+                            try {
+                                Scanner loadData = new Scanner(new File(String.valueOf(file)));
+                                while (loadData.hasNext()){
+                                    index++;
+                                    System.out.println(
+                                            index + ". " +
+                                            loadData.next().replaceAll(",", " "));
+                                }
+                            } catch (FileNotFoundException error) {
+                                System.out.println(error.getMessage());
+                            }
+                        }
+                        System.out.print("Enter an option to load player: ");
+
+                        while (!loaded) {
+                            try {
+                                int loadChoice = input.nextInt();
+
+                                Scanner selectedFile = new Scanner(
+                                        new File(String.valueOf(filesDirectory[loadChoice-1])));
+
+                                String[] data = selectedFile.next().split(",");
+                                if(GameUtil.validatePlayers(players, data[1])) {
+                                    String[] weaponData = data[7].split("-");
+
+                                    players.add(new Player(
+                                            data[1],
+                                            new Weapon(weaponData[0], weaponData[1], parseInt(weaponData[2])),
+                                            parseInt(data[2]),
+                                            parseInt(data[3]),
+                                            parseInt(data[4]),
+                                            parseInt(data[5]),
+                                            parseInt(data[6])));
+
+                                    System.out.println("\nPlayer loaded successfully...\n");
+                                } else {
+                                    System.out.println("\nPlayer already exist and can not be loaded.\n");
+                                }
+                                loaded = true;
+                            } catch (IndexOutOfBoundsException | InputMismatchException | FileNotFoundException exception) {
+                                System.out.println(exception.getMessage());
+                                System.out.println("\nPlease enter a valid choice.\n");
+
+                                for (File file : filesDirectory) {
+                                    try {
+                                        Scanner loadData = new Scanner(new File(String.valueOf(file)));
+                                        while (loadData.hasNext()){
+                                            index++;
+                                            System.out.println(index + ". " + loadData.next().replaceAll(",", " "));
+                                        }
+                                    } catch (FileNotFoundException error) {
+                                        System.out.println(error.getMessage());
+                                    }
+                                }
+                                index = 0;
+                                System.out.print("Enter an option to load player: ");
+                            }
+                        }
+                    } else {
+                        System.out.println("\nNo players available to load or maximum number of players have been created.\n");
+                    }
                 }
                 case 4 -> {
-                    System.out.println("\nSave Character\n");
+                    if (players.size() > 0) {
+                        System.out.println("\nSave Character...\n");
+                        boolean saved = false;
+                        int index = 0;
 
+                        System.out.println();
+                        for (Object player : players) {
+                            index++;
+                            System.out.println(index + ". " + player);
+                        }
+                        System.out.print("Enter an option to save player: ");
+
+                        while (!saved) {
+                            try {
+                                int saveChoice = input.nextInt();
+                                Player player = (Player) players.get(saveChoice - 1);
+
+                                if (FileUtil.fileValidation(player.Name)) {
+                                    FileUtil.ExportData(player);
+                                } else {
+                                    System.out.println("\nInstance of Player already has already been saved.\n");
+                                }
+
+                                saved = true;
+                            } catch (IndexOutOfBoundsException | InputMismatchException exception) {
+                                System.out.println("\nPlease enter a valid choice.");
+
+                                for (Object player : players) {
+                                    index++;
+                                    System.out.println(index + ". " + player);
+                                }
+                                index = 0;
+                                System.out.print("Enter an option to save player: ");
+                            }
+                        }
+                    } else {
+                        System.out.println("\nNo players have been created.\n");
+                    }
                 }
                 default -> System.out.println("\nPlease enter a valid choice.\n");
             }
 
-            DisplayMenu("main");
+            GameUtil.displayMenu("main");
             choice = input.nextInt();
         }
 
@@ -79,8 +194,16 @@ public class Application {
 
         String name = "";
         name += input.nextLine().replaceAll("\\s+","_");
+        boolean validName = GameUtil.validateName(name);
 
-        DisplayMenu("character");
+        while(!validName){
+            System.out.print("\nEnter Character Name: ");
+            name = "";
+            name += input.nextLine().replaceAll("\\s+","_");
+            validName = GameUtil.validateName(name);
+        }
+
+        GameUtil.displayMenu("character");
         int choice = input.nextInt();
         System.out.println();
 
@@ -94,8 +217,8 @@ public class Application {
                 boolean exit = false;
 
                 while(count > 0 && !exit){
-                    DisplaySubMenu("stats", Strength, Dexterity, Constitution, count);
-                    DisplayMenu("stats");
+                    GameUtil.displaySubMenu("stats", Strength, Dexterity, Constitution, count);
+                    GameUtil.displayMenu("stats");
                     int statChoice = input.nextInt();
 
                     switch (statChoice){
@@ -112,7 +235,7 @@ public class Application {
                     }
                     if (statChoice < 5 && statChoice != 4) count--;
                 }
-                DisplaySubMenu("stats", Strength, Dexterity, Constitution, count);
+                GameUtil.displaySubMenu("stats", Strength, Dexterity, Constitution, count);
             }
             case 2 -> {
                 int finalStat;
@@ -128,19 +251,12 @@ public class Application {
                         finalStat = randStat - error;
                     } else {
                         count = count - randStat;
-
                         finalStat = randStat;
                     }
 
-                    if(statChoice == 1){
-                        Strength += finalStat;
-                    }
-                    if (statChoice == 2) {
-                        Dexterity += finalStat;
-                    }
-                    if (statChoice == 3){
-                        Constitution += finalStat;
-                    }
+                    if(statChoice == 1) Strength += finalStat;
+                    if (statChoice == 2) Dexterity += finalStat;
+                    if (statChoice == 3) Constitution += finalStat;
                 }
             }
             default -> System.out.println("Invalid input");
