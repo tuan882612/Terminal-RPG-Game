@@ -16,7 +16,13 @@ public class GameMap {
 
     public void DisplayMap(){
         Map.forEach( row -> {
-            row.forEach( item -> System.out.print(item + "  "));
+            row.forEach( item -> {
+                if (item.length() == 1) {
+                    System.out.print(item + "  ");
+                } else {
+                    System.out.print(item);
+                }
+            });
             System.out.println();
         });
     }

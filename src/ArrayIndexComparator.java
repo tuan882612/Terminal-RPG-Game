@@ -1,17 +1,18 @@
+import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ArrayIndexComparator implements Comparator<Integer> {
-    private final Integer[] array;
+    private final ArrayList<Integer> array;
 
-    public ArrayIndexComparator(Integer[] array) {
-        this.array = array;
+    public ArrayIndexComparator(ArrayList<Integer> arr) {
+        array = arr;
     }
 
-    public Integer[] createIndexArray() {
-        Integer[] indices = new Integer[array.length];
+    public ArrayList<Integer> createIndexArray() {
+        ArrayList<Integer> indices = new ArrayList<>();
 
-        for (int i = 0; i < indices.length; i++) {
-            indices[i] = i;
+        for (int i = 0; i < array.size(); i++) {
+            indices.add(i);
         }
 
         return indices;
@@ -19,6 +20,6 @@ public class ArrayIndexComparator implements Comparator<Integer> {
 
     @Override
     public int compare(Integer o1, Integer o2) {
-        return array[o2].compareTo(array[o1]);
+        return array.get(o2).compareTo(array.get(o1));
     }
 }

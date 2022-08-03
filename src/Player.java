@@ -30,7 +30,7 @@ public class Player extends Creature{
     }
 
     public int rollInitiative() {
-        return GameUtil.rollDice("d20");
+        return GameUtil.rollDice(getWeapon().getDiceType());
     }
 
     @Override
@@ -94,5 +94,4 @@ public class Player extends Creature{
             System.out.println("\n" + getName() + " wasn't able to disarm " + creature.getName() + ".");
         }
     }
-
 }

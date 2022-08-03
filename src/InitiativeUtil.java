@@ -1,55 +1,64 @@
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class InitiativeUtil {
-    private final Player[] players;
-    private Integer[] indices;
+    private final ArrayList<Creature> players;
+    private ArrayList<Integer> indices;
 
-    public InitiativeUtil(Player[] players) {
-        this.players = players;
+    public InitiativeUtil(ArrayList<Creature> arr) {
+        players = arr;
     }
 
-    public Integer[] rollInitiative() {
-        Integer[] rolls = new Integer[players.length];
-        for (int i = 0; i < players.length; i++) {
-            rolls[i] = players[i].rollInitiative();
+    public ArrayList<Integer> rollInitiative() {
+        ArrayList<Integer> rolls = new ArrayList<>();
+
+        for (Creature player : players) {
+            String className = player.getClass().toString().split(" ")[1];
+
+            if (Objects.equals(className, "Player")) {
+                rolls.add(((Player) player).rollInitiative());
+            } else if (Objects.equals(className, "Monster")) {
+                rolls.add(GameUtil.rollDice("d20"));
+            }
         }
 
         ArrayIndexComparator c = new ArrayIndexComparator(rolls);
-        this.indices = c.createIndexArray();
-        Arrays.sort(this.indices, c);
 
-        System.out.println("Initiative Order");
-        for (int i = 0; i < players.length; i++) {
-            System.out.printf("%d. %s (rolled %d)\n", i + 1, players[indices[i]].getName(), rolls[indices[i]]);
+        indices = c.createIndexArray();
+        indices.sort(c);
+
+        System.out.println("\nInitiative Order");
+        for (int i = 0; i < players.size(); i++) {
+            System.out.printf("%d. %s (rolled %d) - class: %s\n",
+                    i + 1,
+                    players.get(indices.get(i)).getName(),
+                    rolls.get(indices.get(i)),
+                    players.get(indices.get(i)).getClass().toString().split(" ")[1]);
         }
 
-        resolveDuplicates(rolls, c, 0, this.indices.length - 1);
+        resolveDuplicates(rolls, c, 0, indices.size() - 1);
 
         return indices;
     }
 
-    private void printArray(Integer[] rolls, int startIdx, int endIdx) {
-        for (int i = startIdx; i <= endIdx; i++) {
-            System.out.printf("%d. %s (rolled %d)\n", i + 1, players[indices[i]].getName(), rolls[indices[i]]);
-        }
-    }
-
-    private int resolveDuplicates(Integer[] rolls, ArrayIndexComparator c, int startIdx, int endIdx) {
+    private int resolveDuplicates(ArrayList<Integer> rolls, ArrayIndexComparator c, int startIdx, int endIdx) {
         for (int i = startIdx, j = i; i < endIdx; i++, j++) {
-            while (j < endIdx && rolls[indices[i]].compareTo(rolls[indices[j + 1]]) == 0) {
+            while (j < endIdx && rolls.get(indices.get(i)).compareTo(rolls.get(indices.get(j + 1))) == 0) {
                 j++;
             }
 
             if (i != j) {
-                System.out.println("Duplicates!");
-
-                System.out.printf("Re-rolling %d to %d\n", i + 1, j + 1);
                 for (int k = i; k <= j; k++) {
-                    rolls[indices[k]] = players[indices[k]].rollInitiative();
-                }
-                Arrays.sort(indices, i, j + 1, c);
+                    String className = players.get(indices.get(k)).getClass().toString().split(" ")[1];
 
-                printArray(rolls, i, j);
+                    if (Objects.equals(className, "Player")) {
+                        rolls.set(indices.get(k), ((Player) players.get(indices.get(k))).rollInitiative());
+                    } else if (Objects.equals(className, "Monster")) {
+                        rolls.set(indices.get(k), GameUtil.rollDice("d20"));
+                    }
+                }
+
+                indices.sort(c);
 
                 i = resolveDuplicates(rolls, c, i, j);
             }
